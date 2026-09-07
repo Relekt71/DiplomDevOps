@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -42,7 +42,7 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64          # <-- КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: собираем только под amd64
+          platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
@@ -51,23 +51,28 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    # Деплоим ТОЛЬКО при создании тега
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+      # ЭТОТ ЭКШЕН ИДЕАЛЬНО ОБРАБАТЫВАЕТ MULTILINE СЕКРЕТЫ
+      - name: Set Kubernetes context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Set KUBECONFIG
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-
-      - name: Update image tag in Kubernetes deployment
+      - name: Deploy to Kubernetes
         run: |
           TAG=${GITHUB_REF#refs/tags/}
           echo "Deploying version: $TAG"
+          
+          # Проверяем подключение
+          kubectl cluster-info
+          
+          # Обновляем образ
           kubectl set image deployment/diploma-test-app test-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG} -n default
+          
+          # Ждем завершения
           kubectl rollout status deployment/diploma-test-app -n default
