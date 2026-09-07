@@ -44,6 +44,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # ОТКЛЮЧАЕМ лишние метаданные, которые не поддерживает Yandex Container Registry
+          provenance: false
+          sbom: false
 
   deploy:
     needs: build-and-push
