@@ -6,35 +6,41 @@
 
 ##  Архитектура
 
-┌─────────────────────────────────────────────────────────────┐
-│                    Yandex Cloud (ru-central1)                │
-├─────────────────────────────────────────────────────────────┤
-│  VPC: diploma-network                                       │
-│  ├── Subnet A (10.10.0.0/16) - ru-central1-a               │
-│  │   ├── k8s-master (10.10.0.5, Public: 51.250.73.33)     │
-│  │   └── k8s-worker-0 (10.10.0.32, Public: NAT)           │
-│  ├── Subnet B (10.11.0.0/16) - ru-central1-b               │
-│  │   └── k8s-worker-1 (10.11.0.9, Public: NAT)            │
-│  └── Container Registry: crpht3918eo252ctvgjn               │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                    Kubernetes Cluster (v1.30.4)              │
-├─────────────────────────────────────────────────────────────┤
-│  Control Plane: node1 (k8s-master)                          │
-│  Workers: node2, node3                                      │
-│  Network: Calico                                            │
-│  DNS: CoreDNS                                               │
-│  Monitoring: Prometheus + Grafana                           │
-│  Ingress: nginx-ingress-controller                          │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                    CI/CD Pipeline (GitHub Actions)           │
-├─────────────────────────────────────────────────────────────┤
-│  Trigger: Git tag (v*)                                      │
-│  1. Build Docker image                                      │
-│  2. Push to Yandex Container Registry                       │
-│  3. Deploy to Kubernetes (rolling update)                   │
-└─────────────────────────────────────────────────────────────┘
+### Инфраструктура Yandex Cloud (ru-central1)
+
+**VPC:** diploma-network  
+**Container Registry:** crpht3918eo252ctvgjn
+
+| Компонент | Зона | Внутренний IP | Публичный IP |
+|-----------|------|---------------|--------------|
+| k8s-master (Control Plane) | ru-central1-a | 10.10.0.5 | 51.250.73.33 |
+| k8s-worker-0 | ru-central1-a | 10.10.0.32 | NAT |
+| k8s-worker-1 | ru-central1-b | 10.11.0.9 | NAT |
+
+---
+
+### Kubernetes Cluster (v1.30.4)
+
+| Компонент | Технология |
+|-----------|------------|
+| Control Plane | node1 (k8s-master) |
+| Workers | node2, node3 |
+| Network Plugin | Calico |
+| DNS | CoreDNS |
+| Container Runtime | containerd |
+| Monitoring | Prometheus + Grafana |
+| Ingress Controller | nginx-ingress |
+
+---
+
+### CI/CD Pipeline (GitHub Actions)
+
+| Шаг | Описание |
+|-----|----------|
+| 1. Trigger | Создание Git-тега (v*) |
+| 2. Build | Сборка Docker-образа |
+| 3. Push | Отправка в Yandex Container Registry |
+| 4. Deploy | Обновление Deployment в Kubernetes (rolling update) |
 
 ##  Структура проекта
 
