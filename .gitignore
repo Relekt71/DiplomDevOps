@@ -1,0 +1,36 @@
+# Terraform state и локальные файлы
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+tfplan
+terraform.tfvars.backup
+
+# Секреты и ключи (НИКОГДА не коммитим!)
+*.key
+*.pem
+ssh_key
+registry-key.json
+fresh-key.json
+*_access_key.txt
+*_secret_key.txt
+*_id.txt
+*_ip.txt
+*_ips.txt
+bucket_name.txt
+bucket_access_key.txt
+bucket_secret_key.txt
+
+# Локальные окружения и большие папки
+venv/
+kubespray/
+node_modules/
+.kube/
+
+# ОС и IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
