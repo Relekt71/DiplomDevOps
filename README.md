@@ -44,18 +44,19 @@
 
 ##  Структура проекта
 
-DiplomDevOps/
-├── infra-bootstrap/       # Terraform для начальной инфраструктуры (backend, SA)
-├── infra-main/           # Terraform для ВМ и сетей
-├── infra-registry/       # Terraform для Container Registry
-├── test-app/             # Тестовое приложение + Dockerfile + CI/CD
-│   ├── .github/workflows/ci-cd.yml
-│   ├── Dockerfile
-│   └── index.html
-├── scripts/              # Автоматизация деплоя
-│   ├── deploy.sh
-│   └── destroy.sh
-└── README.md
+| Директория / Файл | Назначение |
+|-------------------|------------|
+| `infra-bootstrap/` | Terraform конфигурации для начальной инфраструктуры (backend state, сервисные аккаунты) |
+| `infra-main/` | Terraform конфигурации для виртуальных машин, сетей и Security Groups |
+| `infra-registry/` | Terraform конфигурации для Yandex Container Registry и IAM-политик |
+| `test-app/` | Тестовое приложение с Dockerfile и CI/CD конфигурацией |
+| `test-app/.github/workflows/ci-cd.yml` | GitHub Actions workflow для автоматической сборки и деплоя |
+| `test-app/Dockerfile` | Docker-образ тестового приложения (nginx + custom HTML) |
+| `test-app/index.html` | HTML-страница тестового приложения |
+| `scripts/deploy.sh` | Bash-скрипт для полного развёртывания инфраструктуры |
+| `scripts/destroy.sh` | Bash-скрипт для удаления инфраструктуры |
+| `README.md` | Основная документация проекта |
+| `LINKS.md` | Ссылки на приложения и ресурсы для комиссии |
 
 
 ##  Быстрый старт
