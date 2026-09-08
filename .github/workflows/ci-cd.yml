@@ -56,7 +56,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ЭТОТ ЭКШЕН ИДЕАЛЬНО ОБРАБАТЫВАЕТ MULTILINE СЕКРЕТЫ
       - name: Set Kubernetes context
         uses: azure/k8s-set-context@v4
         with:
@@ -67,12 +66,6 @@ jobs:
         run: |
           TAG=${GITHUB_REF#refs/tags/}
           echo "Deploying version: $TAG"
-          
-          # Проверяем подключение
           kubectl cluster-info
-          
-          # Обновляем образ
           kubectl set image deployment/diploma-test-app test-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG} -n default
-          
-          # Ждем завершения
           kubectl rollout status deployment/diploma-test-app -n default
