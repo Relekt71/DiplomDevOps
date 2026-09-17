@@ -40,7 +40,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./test-app              # <-- ИСПРАВЛЕНО: путь к тестовому приложению
+          file: ./test-app/Dockerfile      # <-- ИСПРАВЛЕНО: путь к Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
