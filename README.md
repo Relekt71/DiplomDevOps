@@ -167,3 +167,6 @@ CI/CD: Создать тег v1.0.9 и показать автоматическ
 
 Rollback: kubectl rollout undo deployment/diploma-test-app
 
+<img width="1053" height="322" alt="image" src="https://github.com/user-attachments/assets/356dedf8-2eef-40e7-b2fe-a376cb4c6a12" />
+
+Security Group
