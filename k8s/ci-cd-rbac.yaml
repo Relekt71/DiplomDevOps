@@ -1,0 +1,36 @@
+---
+# 1. ServiceAccount для GitHub Actions
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: github-actions-deployer
+  namespace: default
+---
+# 2. Role: разрешаем только читать и обновлять Deployment'ы в namespace default
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ci-cd-deployer-role
+  namespace: default
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"] # Чтобы kubectl rollout status мог читать статус подов
+---
+# 3. RoleBinding: привязываем Role к нашему ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ci-cd-deployer-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: github-actions-deployer
+    namespace: default
+roleRef:
+  kind: Role
+  name: ci-cd-deployer-role
+  apiGroup: rbac.authorization.k8s.io
