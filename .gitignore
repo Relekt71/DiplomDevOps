@@ -1,10 +1,11 @@
 # Terraform state и локальные файлы
-*.tfstate
-*.tfstate.*
 .terraform/
-.terraform.lock.hcl
-tfplan
+*.tfstate
+*.tfstate.backup
+*.auto.tfvars
+terraform.tfvars
 terraform.tfvars.backup
+tfplan
 
 # Секреты и ключи (НИКОГДА не коммитим!)
 *.key
