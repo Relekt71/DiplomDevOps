@@ -40,8 +40,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./test-app              # <-- ИСПРАВЛЕНО: путь к тестовому приложению
-          file: ./test-app/Dockerfile      # <-- ИСПРАВЛЕНО: путь к Dockerfile
+          context: ./test-app
+          file: ./test-app/Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
@@ -66,7 +66,9 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           TAG=${GITHUB_REF#refs/tags/}
-          echo "Deploying version: $TAG"
-          kubectl cluster-info
+          echo " Deploying version: $TAG"
+          # Обновляем образ в deployment
           kubectl set image deployment/diploma-test-app test-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG} -n default
+          # Ждём завершения rollout
           kubectl rollout status deployment/diploma-test-app -n default
+          echo "✅ Deployment completed successfully!"
