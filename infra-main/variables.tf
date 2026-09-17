@@ -94,3 +94,9 @@ variable "worker_disk_size" {
   type        = number
   default     = 20
 }
+
+variable "admin_ip" {
+  description = "IP-адрес администратора для доступа по SSH и к API Kubernetes"
+  type        = string
+  default     = "0.0.0.0/0" # Значение по умолчанию, но будет перезаписано из my_ip.auto.tfvars
+}
