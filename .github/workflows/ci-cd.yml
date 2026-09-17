@@ -1,0 +1,71 @@
+name: Build and Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+env:
+  REGISTRY: cr.yandex/crpht3918eo252ctvgjn
+  IMAGE_NAME: diploma-test-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Yandex Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_SA_KEY }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
+          sbom: false
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Kubernetes context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "Deploying version: $TAG"
+          kubectl cluster-info
+          kubectl set image deployment/diploma-test-app test-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG} -n default
+          kubectl rollout status deployment/diploma-test-app -n default
