@@ -7,7 +7,7 @@
 - **Тестовое приложение:** http://51.250.73.33:32042
 - **Grafana:** http://51.250.73.33:32040/grafana
   - **Логин:** `admin`
-  - **Пароль:** `diploma-admin`
+  - **Пароль:** (выдан проверяющему отдельно)
 
 ##  Docker Images (Yandex Container Registry)
 - **Репозиторий:** `cr.yandex/crpht3918eo252ctvgjn/diploma-test-app`
