@@ -6,19 +6,20 @@ echo "🔧 Генерация инвентаря Kubespray из Terraform output
 # Переходим в директорию infra-main
 cd "$(dirname "$0")/../infra-main"
 
-# Проверяем, что Terraform state существует
-if [ ! -f terraform.tfstate ]; then
-    echo "❌ Ошибка: terraform.tfstate не найден. Сначала выполните terraform apply."
-    exit 1
+# Проверяем, что Terraform инициализирован (бэкенд S3)
+if [ ! -d ".terraform" ]; then
+    echo "⚙️  Terraform не инициализирован. Выполняем terraform init..."
+    terraform init
 fi
 
-# Получаем IP из Terraform outputs
+# Получаем IP из Terraform outputs (читает из удаленного бэкенда S3)
 MASTER_PRIVATE_IP=$(terraform output -raw master_private_ip 2>/dev/null)
 MASTER_PUBLIC_IP=$(terraform output -raw master_public_ip 2>/dev/null)
 WORKER_IPS_JSON=$(terraform output -json worker_private_ips 2>/dev/null)
 
 if [ -z "$MASTER_PRIVATE_IP" ] || [ -z "$WORKER_IPS_JSON" ]; then
     echo "❌ Ошибка: не удалось получить IP из Terraform outputs."
+    echo "💡 Убедитесь, что инфраструктура развёрнута (terraform apply выполнен)."
     exit 1
 fi
 
