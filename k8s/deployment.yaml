@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diploma-test-app
+  labels:
+    app: diploma-test-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: diploma-test-app
+  template:
+    metadata:
+      labels:
+        app: diploma-test-app
+    spec:
+      # Этот секрет мы создадим позже для безопасного pull из Yandex Registry
+      imagePullSecrets:
+        - name: yc-registry-secret
+      containers:
+      - name: test-app
+        image: cr.yandex/crpht3918eo252ctvgjn/diploma-test-app:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
