@@ -1,43 +1,40 @@
 #!/bin/bash
 set -e
 
-echo "🔧 Генерация инвентаря Kubespray из Terraform outputs..."
+echo "Generating Kubespray inventory from Terraform outputs..."
 
-# Переходим в директорию infra-main
-cd "$(dirname "$0")/../infra-main"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Проверяем, что Terraform инициализирован (бэкенд S3)
+cd "$REPO_ROOT/infra-main"
+
 if [ ! -d ".terraform" ]; then
-    echo "⚙️  Terraform не инициализирован. Выполняем terraform init..."
+    echo "Terraform is not initialized. Running terraform init..."
     terraform init
 fi
 
-# Получаем IP из Terraform outputs (читает из удаленного бэкенда S3)
 MASTER_PRIVATE_IP=$(terraform output -raw master_private_ip 2>/dev/null)
 MASTER_PUBLIC_IP=$(terraform output -raw master_public_ip 2>/dev/null)
 WORKER_IPS_JSON=$(terraform output -json worker_private_ips 2>/dev/null)
 
 if [ -z "$MASTER_PRIVATE_IP" ] || [ -z "$WORKER_IPS_JSON" ]; then
-    echo "❌ Ошибка: не удалось получить IP из Terraform outputs."
-    echo "💡 Убедитесь, что инфраструктура развёрнута (terraform apply выполнен)."
+    echo "Error: failed to get IPs from Terraform outputs."
+    echo "Make sure the infrastructure is deployed (terraform apply was executed)."
     exit 1
 fi
 
-echo "✅ Получены IP:"
+echo "Received IPs:"
 echo "  Master (private): $MASTER_PRIVATE_IP"
 echo "  Master (public): $MASTER_PUBLIC_IP"
 
-# Парсим JSON с IP воркеров
 WORKER_IPS=$(echo "$WORKER_IPS_JSON" | python3 -c "import sys, json; ips = json.load(sys.stdin); print('\n'.join(ips))")
 
 echo "  Workers:"
 echo "$WORKER_IPS" | while read ip; do echo "    - $ip"; done
 
-# Создаём директорию для инвентаря
-INVENTORY_DIR="$(dirname "$0")/../k8s/kubespray-inventory"
+INVENTORY_DIR="$REPO_ROOT/k8s/kubespray-inventory"
 mkdir -p "$INVENTORY_DIR"
 
-# Генерируем инвентарь динамически
 cat > "$INVENTORY_DIR/hosts.yml" << INVENTORY
 all:
   hosts:
@@ -65,6 +62,6 @@ $(echo "$WORKER_IPS" | awk '{print "        node"NR+1":"}')
 INVENTORY
 
 echo ""
-echo "✅ Инвентарь сгенерирован: $INVENTORY_DIR/hosts.yml"
+echo "Inventory generated: $INVENTORY_DIR/hosts.yml"
 echo ""
 cat "$INVENTORY_DIR/hosts.yml"

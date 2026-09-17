@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "ВНИМАНИЕ: Это действие необратимо удалит всю инфраструктуру в Яндекс.Облаке!"
-read -p "Вы уверены, что хотите продолжить? (введите 'yes' для подтверждения): " confirm
+echo "WARNING: This action will irreversibly destroy all infrastructure in Yandex Cloud!"
+read -p "Are you sure you want to continue? (type 'yes' to confirm): " confirm
 
 if [ "$confirm" != "yes" ]; then
-    echo "Операция отменена."
+    echo "Operation canceled."
     exit 1
 fi
 
-echo "Уничтожение ресурсов Terraform..."
+echo "Destroying Terraform resources..."
 cd infra-main
 terraform destroy -auto-approve
 
-echo "Инфраструктура успешно уничтожена."
-echo "Не забудьте вручную удалить Container Registry и Service Accounts в консоли Яндекс.Облака, если они создавались отдельно."
+echo "Infrastructure successfully destroyed."
+echo "Remember to manually delete Container Registry and Service Accounts in Yandex Cloud console if they were created separately."
