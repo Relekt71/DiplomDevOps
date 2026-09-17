@@ -145,19 +145,19 @@
 
 <img width="1084" height="297" alt="image" src="https://github.com/user-attachments/assets/857df80d-5771-4f5e-a542-c2ffda93a848" />
 
-<img width="895" height="163" alt="image" src="https://github.com/user-attachments/assets/93610bbd-5e5d-4bb3-a106-887afbf20270" />
+<img width="884" height="148" alt="image" src="https://github.com/user-attachments/assets/fbcfd034-c403-4779-aff1-51f1bd774f6d" />
 
 Инфраструктура: terraform plan и yc compute instance list
 
-<img width="918" height="624" alt="image" src="https://github.com/user-attachments/assets/5e00a179-9ad2-4036-b7c2-75d1f4229643" />
+<img width="909" height="608" alt="image" src="https://github.com/user-attachments/assets/359ae284-a996-41cd-9175-95ae916be8f8" />
 
 Kubernetes: kubectl get nodes и kubectl get pods -A
 
-<img width="1495" height="823" alt="image" src="https://github.com/user-attachments/assets/54b9e029-d318-4a6d-90d8-a1e461e0eaab" />
+<img width="1498" height="693" alt="image" src="https://github.com/user-attachments/assets/3449364e-50a2-4456-ad9c-ec2f94d9b5a7" />
 
 Мониторинг: Открыть Grafana в браузере
 
-<img width="751" height="361" alt="image" src="https://github.com/user-attachments/assets/1cf627db-c252-454f-9276-2ab14031ddde" />
+<img width="1056" height="522" alt="image" src="https://github.com/user-attachments/assets/2c985407-48e1-4c79-9362-bd909ba53f72" />
 
 CI/CD: Создать тег v1.0.9 и показать автоматический деплой в GitHub Actions
 
